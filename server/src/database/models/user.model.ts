@@ -1,4 +1,6 @@
-import {Table,Model,Column,DataType} from "sequelize-typescript";
+import {Table,Model,Column,DataType, HasOne, HasMany} from "sequelize-typescript";
+import Subscription from "./Subscription.model";
+import UserPayment from "./user_payment.model";
 
 @Table({
   tableName: "users",
@@ -33,6 +35,12 @@ class User extends Model {
     allowNull: false
   })
   declare password: string;
+
+  @HasOne(()=>Subscription)
+  declare subscription: Subscription;
+
+  @HasMany(()=>UserPayment)
+  declare payments: UserPayment[];
 }
 
 export default User;

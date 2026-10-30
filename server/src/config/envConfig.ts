@@ -11,5 +11,6 @@ function getEnvVariable(key: string): string {
 const envConfig = {
   PORT: getEnvVariable("PORT"),
   DB_URL: getEnvVariable("DB_URL"),
+  JWT_SECRET: getEnvVariable("JWT_SECRET"),
 }
 export default envConfig;

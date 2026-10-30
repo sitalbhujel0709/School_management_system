@@ -1,13 +1,13 @@
 import {Table, Column, Model, DataType, ForeignKey, BelongsTo } from "sequelize-typescript";
-import UserPayment from "./user_payment.model";
+import User from "./user.model";
 
 @Table({
-  tableName: "memberships",
-  modelName: "Membership",
+  tableName: "subscriptions",
+  modelName: "Subscription",
   timestamps: true
 })
 
-class Membership extends Model {
+class Subscription extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -21,32 +21,34 @@ class Membership extends Model {
   })
   declare plan: "BASIC" | "PRO" | "MAX";
 
-  @ForeignKey(()=>UserPayment)
+  @ForeignKey(()=>User)
   @Column({
     type: DataType.UUID,
     allowNull: false
   })
-  declare userPaymentId: string;
-  @BelongsTo(()=>UserPayment)
-  declare userPayment: UserPayment;
+  declare userId: string;
+  
 
   @Column({
-    type: DataType.ENUM("ACTIVE","INACTIVE"),
+    type: DataType.ENUM("ACTIVE","INACTIVE","CANCELLED"),
     defaultValue: "INACTIVE"
   })
-  declare status: "ACTIVE" | "INACTIVE";
+  declare status: "ACTIVE" | "INACTIVE" | "CANCELLED";
   
   @Column({
     type: DataType.DATE,
-    allowNull: false
+    allowNull: false,
+    defaultValue: DataType.NOW
   })
   declare startDate: Date;
   @Column({
     type: DataType.DATE,
-    allowNull: true
+    allowNull: true,
+    defaultValue: null
   })
   declare endDate: Date | null;
-  
+  @BelongsTo(()=>User)
+  declare user: User;
 }
 
-export default Membership;
+export default Subscription;

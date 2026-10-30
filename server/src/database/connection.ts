@@ -3,7 +3,7 @@ import envConfig from "../config/envConfig";
 
 const sequelize = new Sequelize(envConfig.DB_URL,{
   modelPaths: [__dirname + "/models"],
-  logging: console.log,
+  logging: false,
 })
 
 sequelize.authenticate()
