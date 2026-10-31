@@ -18,7 +18,18 @@ export class AuthController {
       return res.status(400).json({ message: "User login failed" });
     }
     const token = createAccessToken({ id: user.id, email: user.email });
-    res.cookie("accessToken", token, { httpOnly: true, secure: process.env.NODE_ENV === "production" });
-    res.status(200).json({ message: "User logged in successfully"});
+    res.cookie("accessToken", token, { httpOnly: true,sameSite: 'lax', secure: process.env.NODE_ENV === "production" });
+    res.status(200).json({ message: "User logged in successfully" });
+  }
+  static async getCurrentUser(req: Request, res: Response) {
+    const user = req.user;
+    if(!user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    res.status(200).json({ message: "User fetched successfully", data: { user } });
+  }
+  static async logoutUser(req: Request, res: Response) {
+    res.clearCookie("accessToken");
+    res.status(200).json({ message: "User logged out successfully" });
   }
 }

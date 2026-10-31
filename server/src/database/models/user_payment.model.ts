@@ -32,10 +32,16 @@ class UserPayment extends Model {
 
   @Column({
     type: DataType.ENUM("USD","NRP"),
-    allowNull: false
+    allowNull: false,
+    defaultValue: "NRP"
   })
   declare currency: "USD" | "NRP";
-  
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    unique: true
+  })
+  declare transactionId: string;
   @Column({
     type: DataType.ENUM("PENDING","COMPLETED","FAILED"),
     allowNull: false,

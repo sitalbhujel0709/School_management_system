@@ -3,15 +3,9 @@ import type { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../lib/jwt";
 import User from "../database/models/user.model";
 
-export interface IAuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    subscription?: any;
-    userPayments?: any[];
-  }
-}
-export const requireAuth = async (req: IAuthenticatedRequest, res: Response, next: NextFunction) => {
+
+
+export const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.cookies.accessToken;
   if (!token) {
     return res.status(401).json({ message: "Unauthorized" });
