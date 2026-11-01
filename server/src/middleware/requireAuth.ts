@@ -24,6 +24,7 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
     req.user = {
       id: user.id,
       email: user.email,
+      username: user.username,
       subscription: {
         isActive: user.subscription?.status === "ACTIVE",
         status: user.subscription?.status,

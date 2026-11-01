@@ -6,21 +6,14 @@ const sequelize = new Sequelize(envConfig.DB_URL,{
   logging: false,
 })
 
-sequelize.authenticate()
-.then(()=>{
-  console.log("Database connected successfully");
-})
-.catch((error)=>{
-  console.error("Unable to connect to database: ", error);
-})
-
-
-sequelize.sync({alter:false})
-.then(()=>{
-  console.log("Database synchronized successfully");
-})
-.catch((error)=>{
-  console.error("Unable to synchronize database: ", error);
-})
-
-export default sequelize;
+const connectToDatabase = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Database connected successfully");
+    await sequelize.sync({ alter: false });
+    console.log("Database synchronized successfully");
+  } catch (error) {
+    console.error("Unable to connect to database: ", error);
+  }
+}
+export { sequelize, connectToDatabase };

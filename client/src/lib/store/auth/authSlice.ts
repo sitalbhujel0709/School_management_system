@@ -6,6 +6,7 @@ import API_INSTANCE from "@/lib/axios/axios";
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
+  isUserInitialized: false,
   isLoading: false,
   error: null,
 };
@@ -24,10 +25,16 @@ const authSlice = createSlice({
     setError: (state: AuthState, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
+    setUserInitialized: (state: AuthState, action: PayloadAction<boolean>) => {
+      state.isUserInitialized = action.payload;
+    },
+    setIsAuthenticated: (state: AuthState, action: PayloadAction<boolean>) => {
+      state.isAuthenticated = action.payload;
+    }
   },
 });
 
-export const { setLoading, setUser, setError } = authSlice.actions;
+export const { setLoading, setUser, setError, setUserInitialized, setIsAuthenticated } = authSlice.actions;
 export default authSlice.reducer;
 
 export const loginUser = (loginCredentials: LoginCredentials) => {
@@ -37,16 +44,19 @@ export const loginUser = (loginCredentials: LoginCredentials) => {
       dispatch(setError(null));
       await API_INSTANCE.post("/users/login", loginCredentials);
       const response = await API_INSTANCE.get("/users/me");
-      const user:User= response.data.data;
+      const user:User= response.data.data.user;
       dispatch(setUser(user));
+      dispatch(setIsAuthenticated(true));
       dispatch(setError(null));
       return { success: true};
     } catch (error) {
       if (error instanceof Error) {
         dispatch(setError(error.message));
+        dispatch(setIsAuthenticated(false));
       }
     } finally {
       dispatch(setLoading(false));
+      dispatch(setUserInitialized(true));
     }
   };
 };
@@ -54,16 +64,20 @@ export const loginUser = (loginCredentials: LoginCredentials) => {
 export const logoutUser = () => {
   return async (dispatch: AppDispatch) => {
     try {
-      setLoading(true);
+      dispatch(setLoading(true));
       await API_INSTANCE.post("/users/logout");
       dispatch(setUser(null));
       dispatch(setError(null));
+      dispatch(setIsAuthenticated(false));
+      return { success: true};
     } catch (error: any) {
       if (error instanceof Error) {
         dispatch(setError(error.message));
       }
+      return {success:false}
     } finally {
       dispatch(setLoading(false));
+      dispatch(setUserInitialized(false));
     }
   }
 }
@@ -81,6 +95,28 @@ export const registerUser = (userData:RegisterCredentials)=>{
         dispatch(setError(error.message));
       }
     } finally {
+      dispatch(setLoading(false));
+    }
+  }
+}
+
+export const getCurrentUser = ()=>{
+  return async (dispatch: AppDispatch) => {
+    console.log("getCurrentUser called");
+    try {
+      dispatch(setLoading(true));
+      dispatch(setError(null));
+      const response = await API_INSTANCE.get("/users/me");
+      const user:User= response.data.data.user;
+      dispatch(setUser(user));
+      dispatch(setIsAuthenticated(true));
+      return { success: true};
+    } catch (error) {
+      if (error instanceof Error) {
+        dispatch(setError(error.message));
+      }
+    } finally {
+      dispatch(setUserInitialized(true));
       dispatch(setLoading(false));
     }
   }

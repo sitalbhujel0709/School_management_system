@@ -6,6 +6,7 @@ declare global {
       user?: {
         id: string;
         email: string;
+        username: string;
         subscription?: {
           isActive: boolean;
           status: string | null;

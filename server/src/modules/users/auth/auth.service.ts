@@ -1,4 +1,5 @@
-import sequelize from "../../../database/connection";
+import { Transaction } from "sequelize";
+import {sequelize} from "../../../database/connection";
 import Subscription from "../../../database/models/Subscription.model";
 import User from "../../../database/models/user.model";
 import bcrypt from "bcrypt";
@@ -14,7 +15,7 @@ export class AuthService {
       throw new Error("User with this email already exists");
     }
     const passwordHash = await bcrypt.hash(password, 10);
-    const result = await sequelize.transaction(async(transaction)=>{
+    const result = await sequelize.transaction(async(transaction:Transaction)=>{
       const user = await User.create({
         username,
         email,

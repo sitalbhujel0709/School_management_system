@@ -1,6 +1,6 @@
 import {Router} from "express";
 import AuthRouter from "./users/auth/auth.route";
-import paymentRouter from "./payments/payment.route";
+import paymentRouter from "./payments_subscription/payment.route";
 
 const indexRouter = Router();
 

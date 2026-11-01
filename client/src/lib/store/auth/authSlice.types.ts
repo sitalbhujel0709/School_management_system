@@ -1,6 +1,7 @@
 export interface User {
   id: string;
   email: string;
+  username: string;
   subscription?: {  
     isActive: boolean;
     status: string | null;
@@ -12,6 +13,7 @@ export interface User {
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+  isUserInitialized: boolean;
   isLoading: boolean;
   error: string | null;
 }

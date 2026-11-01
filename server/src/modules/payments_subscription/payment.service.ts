@@ -1,5 +1,6 @@
+import Subscription from "../../database/models/Subscription.model";
 import UserPayment from "../../database/models/user_payment.model";
-import { CreatePaymentInput } from "./payment.validator";
+import { CreatePaymentInput, CreateSubscriptionInput } from "./payment.validator";
 
 export class PaymentService {
   static async createPaymentRecord({
@@ -18,4 +19,10 @@ export class PaymentService {
       return payment;
     }
   }
+
+  static async createSubscriptionRecord(data:CreateSubscriptionInput) {
+    const subscription = await Subscription.create(data);
+    return subscription;
+  }
+
 }
