@@ -24,7 +24,7 @@ const Navbar = () => {
               <Crown size={18} className="inline-block ml-2" />
               </Link>
             ):(
-              <Link href="/plans" className="bg-green-800 text-white text-sm">{user?.subscription?.plan}</Link>
+              <Link href="/plans" className="bg-green-800 text-white text-sm px-4 py-2.5 cursor-pointer hover:bg-green-900">{user?.subscription?.plan}</Link>
             )
           }
         </div>

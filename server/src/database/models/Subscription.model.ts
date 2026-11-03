@@ -47,7 +47,11 @@ class Subscription extends Model {
     defaultValue: null
   })
   declare endDate: Date | null;
-  @BelongsTo(()=>User)
+  @BelongsTo(()=>User,{
+    foreignKey: "userId",
+    onDelete: "RESTRICT",
+    onUpdate: "CASCADE"
+  })
   declare user: User;
 }
 

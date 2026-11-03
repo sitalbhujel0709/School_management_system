@@ -8,6 +8,9 @@ export interface User {
     plan: string | null;
     endDate: Date | null;
   };
+  tenant?: {
+    tenantCode: string | null;
+  }
 }
 
 export interface AuthState {

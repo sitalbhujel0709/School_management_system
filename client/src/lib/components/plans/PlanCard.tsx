@@ -2,6 +2,7 @@
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import API_INSTANCE from "@/lib/axios/axios";
+import { useAppSelector } from "@/lib/store/hooks";
 export interface PlanCardProps {
   planName: string;
   planCode: "PRO" | "MAX";
@@ -12,6 +13,7 @@ export interface PlanCardProps {
 
 const PlanCard = (data: PlanCardProps) => {
   const [loading, setLoading] = React.useState(false);
+  const { user } = useAppSelector((state) => state.auth);
   const handlePayment = async () => {
     try {
       setLoading(true);
@@ -34,7 +36,7 @@ const PlanCard = (data: PlanCardProps) => {
         total_amount: formData.total_amount,
         transaction_uuid: formData.transaction_uuid,
         product_code: formData.product_code,
-        planName: data.planCode ,
+        planName: data.planCode,
       });
       const { signature } = response.data;
 
@@ -68,7 +70,14 @@ const PlanCard = (data: PlanCardProps) => {
       <div className="flex flex-col">
         <div className="bg-green-800 text-white px-4 py-2">
           <div className="mb-4">
-            <h2 className="text-2xl font-bold">{data.planName}</h2>
+            <div className="flex items-center ">
+              <h2 className="text-2xl font-bold">{data.planName}</h2>
+              {user?.subscription?.plan === data.planCode && (
+                <span className="ml-2 underline text-white text-xs ">
+                  Current Plan
+                </span>
+              )}
+            </div>
             <p className="text-gray-200 text-sm">{data.planDescription}</p>
           </div>
           <div className="flex items-center">
@@ -79,20 +88,31 @@ const PlanCard = (data: PlanCardProps) => {
             </div>
           </div>
           <div className="mt-4">
-            <button onClick={handlePayment} disabled={loading} className="w-full bg-white text-green-800 px-4 py-2.5 font-semibold cursor-pointer hover:bg-gray-100">Get {data.planName} Plan</button>
-            <p className="text-xs text-center text-gray-200 mt-1">No commitment. Cancel anytime</p>
+            <button
+              onClick={handlePayment}
+              disabled={loading}
+              className="w-full bg-white text-green-800 px-4 py-2.5 font-semibold cursor-pointer hover:bg-gray-100"
+            >
+              Get {data.planName} Plan
+            </button>
+            <p className="text-xs text-center text-gray-200 mt-1">
+              No commitment. Cancel anytime
+            </p>
           </div>
         </div>
         <div className="px-4 py-2">
-          <p className="text-green-800 font-semibold">Everything in basic and,</p>
+          <p className="text-green-800 font-semibold">
+            Everything in basic and,
+          </p>
           <ul className="mt-4 space-y-2">
-            {
-              data.planFeatures.map((feature, index) => (
-                <li key={index} className="text-sm text-green-800 border-l-2 border-green-800 pl-2">{feature}</li>
-              ))
-            }
-           
-            
+            {data.planFeatures.map((feature, index) => (
+              <li
+                key={index}
+                className="text-sm text-green-800 border-l-2 border-green-800 pl-2"
+              >
+                {feature}
+              </li>
+            ))}
           </ul>
         </div>
       </div>

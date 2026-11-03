@@ -13,6 +13,9 @@ declare global {
           plan: string | null;
           endDate: Date | null;
         };
+        tenant?: {
+          tenantCode: string | null;
+        } 
       };
     }
   }

@@ -1,11 +1,12 @@
-
 import type { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../lib/jwt";
 import User from "../database/models/user.model";
 
-
-
-export const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
+export const requireAuth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const token = req.cookies.accessToken;
   if (!token) {
     return res.status(401).json({ message: "Unauthorized" });
@@ -15,10 +16,10 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
     if (!decoded) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const user = await User.findByPk(decoded.id,{
-      include: ["subscription","payments"]
+    const user = await User.findByPk(decoded.id, {
+      include: ["subscription", "tenants"],
     });
-    if(!user){
+    if (!user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     req.user = {
@@ -31,6 +32,9 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
         plan: user.subscription?.plan,
         endDate: user.subscription?.endDate,
       },
+      tenant: {
+        tenantCode: user.tenants?.tenantCode || null,
+      } 
     };
     next();
   } catch (error) {

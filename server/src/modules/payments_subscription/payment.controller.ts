@@ -16,7 +16,7 @@ export class PaymentController {
       currency: "NRP",
       transactionId: transaction_uuid,
     })
-    const subscription = await Subscription.update({plan: planName},{where:{userId: userId}});
+    const subscription = await Subscription.upsert({userId: userId, plan: planName});
     console.log(subscription)
     res.status(200).json({ signature });
   }
@@ -33,7 +33,7 @@ export class PaymentController {
       return res.status(200).json({ success: true, data: result });
     }
     await UserPayment.update({status:"FAILED"},{where:{transactionId:transaction_uuid}});
-    await Subscription.update({plan:"BASIC"},{where:{userId:req.user?.id}});
+    await Subscription.update({plan:"BASIC",status:"ACTIVE"},{where:{userId:req.user?.id}});
     return res.status(400).json({ success: false, message: "Payment verification failed" });
   }
 }
