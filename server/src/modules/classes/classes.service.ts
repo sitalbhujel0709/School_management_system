@@ -29,7 +29,7 @@ export class ClassesService {
   }
   static async getClassesDetails({tenantCode}:{tenantCode:string}){
     const classesDetails = await sequelize.query(`
-      SELECT c.id, c.class_name, c.class_level, c.capacity, c.seats_available, COUNT(s.id) As total_students
+      SELECT c.id, c.class_name , c.class_level , c.capacity, c.seats_available , COUNT(s.id) as total_students
       FROM public."classes_${tenantCode}" AS c
       LEFT JOIN public."students_${tenantCode}" AS s ON c.id = s.class_id
       GROUP BY c.class_name, c.class_level, c.capacity, c.seats_available, c.id

@@ -1,11 +1,13 @@
 import {configureStore} from "@reduxjs/toolkit"
 import authReducer from "./auth/authSlice"
 import tenantReducer from "./tenant/tenantSlice"
+import classReducer from "./classes/classSlice"
 
 const store = configureStore({
   reducer:{
     auth:authReducer,
-    tenant: tenantReducer
+    tenant: tenantReducer,
+    classes: classReducer
   }
 })
 

@@ -1,7 +1,7 @@
 "use client";
 import { logoutUser } from "@/lib/store/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
-import { Badge, Home, LogOut, User } from "lucide-react";
+import { Badge, BookOpen, Home, LogOut, Presentation, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -36,6 +36,11 @@ const Sidebar = ({ isSidebarOpen }: { isSidebarOpen: boolean }) => {
       href: "/",
     },
     {
+      label: "classes",
+      icon: Presentation,
+      href: "/classes",
+    },
+    {
       label: "students",
       icon: User,
       href: "/students",
@@ -45,6 +50,11 @@ const Sidebar = ({ isSidebarOpen }: { isSidebarOpen: boolean }) => {
       icon: Badge,
       href: "/teachers",
     },
+    {
+      label: "subjects",
+      icon: BookOpen,
+      href: "/subjects",
+    }
   ];
   return (
     <div
@@ -61,8 +71,7 @@ const Sidebar = ({ isSidebarOpen }: { isSidebarOpen: boolean }) => {
           </Link>
         </div>
         {/* sidebar content */}
-        {
-          user?.tenant && user?.tenant.tenantCode && (
+        {user?.tenant && user?.tenant.tenantCode && (
           <div className="flex flex-col flex-1 overflow-y-auto space-y-2 px-2 mt-2">
             {sidebarItems.map((item, index) => (
               <Link
@@ -76,8 +85,8 @@ const Sidebar = ({ isSidebarOpen }: { isSidebarOpen: boolean }) => {
                 )}
               </Link>
             ))}
-          </div>)
-        }
+          </div>
+        )}
         {/* sidebar Footer */}
         <div>
           <div className="absolute bottom-0 w-full h-16 border-t border-gray-300">
