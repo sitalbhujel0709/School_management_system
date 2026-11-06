@@ -10,5 +10,6 @@ const classesRouter = Router();
 
 classesRouter.post("/",requireAuth,requirePlan(["PRO","MAX"]),validationHandler(createClassSchema),asyncErrorHandler(ClassesController.createClass));
 classesRouter.get("/",requireAuth,requirePlan(["PRO","MAX"]), asyncErrorHandler(ClassesController.getClassesDetails));
+classesRouter.get("/:classId",requireAuth,requirePlan(["PRO","MAX"]), asyncErrorHandler(ClassesController.getClassesDetailsById));
 
 export default classesRouter;

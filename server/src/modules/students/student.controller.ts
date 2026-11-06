@@ -23,7 +23,8 @@ export class StudentController {
         message: "Tenant code not found"
       });
     }
-    const { studentId, classId } = req.body;
+    const studentId = req.params.studentId as string;
+    const { classId } = req.body;
     const assignedStudent = await StudentService.assignStudentToClass(studentId, classId, tenantCode);
     return res.status(200).json({
       message: "Student assigned to class successfully",

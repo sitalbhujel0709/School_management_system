@@ -1,30 +1,11 @@
 import { Pen } from "lucide-react";
 import React from "react";
 
-const Table = () => {
+const Table = ({ tableData }: { tableData: any[] }) => {
 
-  const tableHeadings = ["Full Name", "Email", "DOB", "Address", "Action"];
-  const tableData = [
-    {
-      fullName: "John Doe",
-      email: "john@example.com",
-      dob: "1990-01-01",
-      address: "123 Main St",
-    },
-    {
-      fullName: "Jane Smith",
-      email: "jane@example.com",
-      dob: "1992-05-15",
-      address: "456 Oak Ave",
-    },
-    {
-      fullName: "Michael Johnson",
-      email: "michael@example.com",
-      dob: "1985-12-10",
-      address: "789 Pine Rd",
-    }
-  ];
-
+  const tableHeadings = ["Full Name", "Email", "Address", "Action"];
+ 
+  console.log("Table Data:", tableData); // Log the tableData to check its structure
   return (
     <div className="p-2 overflow-y-auto">
       {/* head content of table */}
@@ -51,10 +32,9 @@ const Table = () => {
              {
                 tableData.map((row,index)=>(
                   <tr key={index} className="hover:bg-gray-100">
-                    <td className="px-4 py-2 text-sm text-gray-600">{row.fullName}</td>
-                    <td className="px-4 py-2 text-sm text-gray-600">{row.email}</td>
-                    <td className="px-4 py-2 text-sm text-gray-600">{row.dob}</td>
-                    <td className="px-4 py-2 text-sm text-gray-600">{row.address}</td>
+                    <td className="px-4 py-2 text-sm text-gray-600">{row.student_full_name}</td>
+                    <td className="px-4 py-2 text-sm text-gray-600">{row.student_email}</td>
+                    <td className="px-4 py-2 text-sm text-gray-600">{row.student_address}</td>
                     <td className="px-4 py-2">
                       <button className="px-1 cursor-pointer">
                         <Pen size={16} className="text-green-600"/>

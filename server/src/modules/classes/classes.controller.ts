@@ -17,4 +17,12 @@ export class ClassesController {
       data: classesDetails,
     });
   }
+  static async getClassesDetailsById(req: Request, res: Response) {
+    const classId = req.params.classId as string;
+    const classDetails = await ClassesService.getClassesDetailsById({tenantCode:req.user?.tenant?.tenantCode!,classId});
+    return res.status(200).json({
+      message: "Class details fetched successfully",
+      data: classDetails,
+    });
+  }
 }

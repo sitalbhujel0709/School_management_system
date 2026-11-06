@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IClass, ClassState, CreateClassInput } from "./classSlice.type";
+import { IClass, ClassState, CreateClassInput, ISelecetedClassDetails } from "./classSlice.type";
 import { AppDispatch } from "../store";
 import API_INSTANCE from "@/lib/axios/axios";
 
 const initialState: ClassState = {
   classes: [],
   loading: false,
+  selectedClassDetails: null,
   error: null,
 };
 const classSlice = createSlice({
@@ -21,13 +22,13 @@ const classSlice = createSlice({
     setClasses: (state: ClassState, action: PayloadAction<IClass[]>) => {
       state.classes = action.payload;
     },
-    setClassOnly: (state: ClassState, action: PayloadAction<IClass>) => {
-      state.classes = [...state.classes, action.payload];
+    setClassOnly: (state: ClassState, action: PayloadAction<ISelecetedClassDetails>) => {
+      state.selectedClassDetails = action.payload;
     }
   },
 });
 
-export const { setLoading, setError, setClasses } = classSlice.actions;
+export const { setLoading, setError, setClasses,setClassOnly } = classSlice.actions;
 export default classSlice.reducer;
 
 export function getAllClasses() {
@@ -64,3 +65,17 @@ export function createClass(classData:CreateClassInput) {
   }
 }
 
+export function getClassById(classId:string) {
+  return async function (dispatch: AppDispatch) {
+    try {
+      dispatch(setLoading(true));
+      const response = await API_INSTANCE.get(`/classes/${classId}`);
+      const [data] = response.data.data;
+      dispatch(setClassOnly(data));
+    } catch (error: any) {
+      dispatch(setError(error.message || "An error occurred while fetching class by ID"));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+}

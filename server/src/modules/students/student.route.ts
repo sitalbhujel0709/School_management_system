@@ -9,6 +9,6 @@ import { createStudentSchema } from "./student.validator";
 const studentRouter = Router();
 
 studentRouter.post("/",requireAuth,requirePlan(["PRO","MAX"]),validationHandler(createStudentSchema),asyncErrorHandler(StudentController.createStudent));
-studentRouter.post("/assign-class",requireAuth,requirePlan(["PRO","MAX"]),asyncErrorHandler(StudentController.assignStudentToClass));
+studentRouter.post("/:studentId/assign-class",requireAuth,requirePlan(["PRO","MAX"]),asyncErrorHandler(StudentController.assignStudentToClass));
 
 export default studentRouter;
