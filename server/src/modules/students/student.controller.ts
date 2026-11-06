@@ -31,4 +31,18 @@ export class StudentController {
       data: assignedStudent
     });
   }
+
+  static async getAllStudents(req:Request,res:Response){
+    const tenantCode = req.user?.tenant?.tenantCode;
+    if(!tenantCode){
+      return res.status(400).json({
+        message: "Tenant code not found"
+      });
+    }
+    const students = await StudentService.getAllStudents(tenantCode);
+    return res.status(200).json({
+      message: "Students fetched successfully",
+      data: students
+    });
+  }
 }

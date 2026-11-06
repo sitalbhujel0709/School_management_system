@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { Badge, BookOpen, Home, LogOut, Presentation, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
 interface SidebarItemsProps {
@@ -16,6 +16,7 @@ interface SidebarItemsProps {
 const Sidebar = ({ isSidebarOpen }: { isSidebarOpen: boolean }) => {
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
+  const pathname = usePathname();
   const router = useRouter();
   const handleLogout = async () => {
     try {
@@ -77,7 +78,7 @@ const Sidebar = ({ isSidebarOpen }: { isSidebarOpen: boolean }) => {
               <Link
                 key={index}
                 href={item.href}
-                className={`flex items-center gap-2 p-2 hover:bg-gray-100 ${item.href === window.location.pathname ? "bg-green-50" : ""}`}
+                className={`flex items-center gap-2 p-2 hover:bg-gray-100 ${(pathname === item.href || pathname.startsWith(`${item.href}/`)) ? "bg-green-50" : ""}`}
               >
                 <item.icon className="text-green-800" size={18} />
                 {isSidebarOpen && (

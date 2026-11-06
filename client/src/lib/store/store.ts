@@ -2,12 +2,14 @@ import {configureStore} from "@reduxjs/toolkit"
 import authReducer from "./auth/authSlice"
 import tenantReducer from "./tenant/tenantSlice"
 import classReducer from "./classes/classSlice"
+import studentReducer from "./students/studentSlice"
 
 const store = configureStore({
   reducer:{
     auth:authReducer,
     tenant: tenantReducer,
-    classes: classReducer
+    classes: classReducer,
+    students: studentReducer
   }
 })
 

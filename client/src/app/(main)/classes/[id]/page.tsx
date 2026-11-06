@@ -19,6 +19,7 @@ const page = () => {
   },[])
 
   const classDetails = useAppSelector((state) => state.classes.selectedClassDetails);
+  const tableHeadings = ["Full Name", "Email", "Address", "Action"];
 
   return (
     <div className="py-8 px-6">
@@ -42,7 +43,7 @@ const page = () => {
           <DataCard title="seats Available" value={classDetails?.seats_available || 0}/>
         </div>
         <div className="mt-8">
-          <Table tableData = {classDetails?.students || []} />
+          <Table tableHeadings={tableHeadings} tableData = {classDetails?.students || []} tableTitle="Class Students" tableDescription="List of all students in the class" />
         </div>
       </div>
     </div>

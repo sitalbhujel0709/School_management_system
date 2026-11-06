@@ -8,7 +8,9 @@ export class StudentService {
     data: CreateStudentInput,
     tenantCode: string,
   ) {
-    const { full_name, email, password, date_of_Birth, address } = data;
+    const { full_name, email, date_of_Birth, address } = data;
+
+    const password = full_name.split(" ")[0]+"1234";
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -70,5 +72,30 @@ export class StudentService {
       { type: QueryTypes.SELECT, replacements: [studentId, classId] },
     );
     return assignedStudent[0];
+  }
+  static async getAllStudents(tenantCode: string) {
+    const studentsProfilesTable = `student_profiles_${tenantCode}`;
+    const studentsTable = `students_${tenantCode}`;
+    const classesTable = `classes_${tenantCode}`;
+    const allStudents = await sequelize.query(
+      `
+      SELECT 
+        sp.id AS student_id,
+        sp.full_name AS student_full_name,
+        sp.email AS student_email,
+        sp."date_of_Birth" AS student_date_of_birth,
+        sp.address AS student_address,
+        c.class_name AS class_name
+
+      FROM public."${studentsProfilesTable}" AS sp
+      LEFT JOIN public."${studentsTable}" AS s ON sp.id = s.student_id
+      LEFT JOIN public."${classesTable}" AS c ON s.class_id = c.id
+      ORDER BY sp.full_name ASC;
+      `,
+      {
+        type: QueryTypes.SELECT,
+      },
+    );
+    return allStudents;
   }
 }

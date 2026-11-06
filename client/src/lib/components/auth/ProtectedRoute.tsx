@@ -4,7 +4,6 @@ import React from "react";
 
 const ProtectedRoute = async ({ children }: { children: React.ReactNode }) => {
   const user = await getServerUser();
-  console.log("ProtectedRoute user", user);
   if(!user){
     redirect("/login");
   }
