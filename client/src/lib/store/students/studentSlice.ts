@@ -78,3 +78,42 @@ export function getAllStudents() {
     }
   };
 }
+
+export function getStudentDetailsById(studentId: string) {
+  return async function (dispatch: AppDispatch) {
+    try {
+      dispatch(setLoading(true));
+      const response = await API_INSTANCE.get(`/students/${studentId}`);
+      console.log("Response from API:", response.data);
+      dispatch(setSelectedStudentDetails(response.data.data));
+      dispatch(setError(null));
+      return { success: true };
+    } catch (error:any) {
+      dispatch(
+        setError(error.message || "An error occured while fetching student details"),
+      );
+      return { success: false };
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+}
+
+export function assignClassToStudent(studentId: string, classId: string) {
+  return async function (dispatch: AppDispatch) {
+    try {
+      dispatch(setLoading(true));
+      await API_INSTANCE.post(`/students/${studentId}/assign-class`, { classId });
+      dispatch(setError(null));
+      return { success: true };
+    } catch (error: any) {
+      console.error("Error assigning class to student:", error);
+      dispatch(
+        setError(error.message || "An error occurred while assigning class to student"),
+      );
+      return { success: false };
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+}

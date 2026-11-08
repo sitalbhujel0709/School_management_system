@@ -10,7 +10,7 @@ export class StudentService {
   ) {
     const { full_name, email, date_of_Birth, address } = data;
 
-    const password = full_name.split(" ")[0]+"1234";
+    const password = full_name.split(" ")[0] + "1234";
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -97,5 +97,31 @@ export class StudentService {
       },
     );
     return allStudents;
+  }
+  static async getStudentDetailsById(studentId: string, tenantCode: string) {
+    const studentsProfilesTable = `student_profiles_${tenantCode}`;
+    const studentsTable = `students_${tenantCode}`;
+    const classesTable = `classes_${tenantCode}`;
+
+    const studentDetails = await sequelize.query(
+      `
+      SELECT 
+        sp.id AS student_id,
+        sp.full_name AS student_full_name,
+        sp.email AS student_email,
+        sp."date_of_Birth" AS student_date_of_birth,
+        sp.address AS student_address,
+        c.class_name AS class_name
+      FROM public."${studentsProfilesTable}" AS sp
+      LEFT JOIN public."${studentsTable}" AS s ON sp.id = s.student_id
+      LEFT JOIN public."${classesTable}" AS c ON s.class_id = c.id
+      WHERE sp.id = ?
+      `,
+      {
+        type: QueryTypes.SELECT,
+        replacements: [studentId],
+      },
+    );
+    return studentDetails[0];
   }
 }

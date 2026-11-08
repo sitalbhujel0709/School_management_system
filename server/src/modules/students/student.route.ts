@@ -11,5 +11,6 @@ const studentRouter = Router();
 studentRouter.post("/",requireAuth,requirePlan(["PRO","MAX"]),validationHandler(createStudentSchema),asyncErrorHandler(StudentController.createStudent));
 studentRouter.post("/:studentId/assign-class",requireAuth,requirePlan(["PRO","MAX"]),asyncErrorHandler(StudentController.assignStudentToClass));
 studentRouter.get("/",requireAuth,requirePlan(["PRO","MAX"]),asyncErrorHandler(StudentController.getAllStudents));
+studentRouter.get("/:studentId",requireAuth,requirePlan(["PRO","MAX"]),asyncErrorHandler(StudentController.getStudentById));
 
 export default studentRouter;

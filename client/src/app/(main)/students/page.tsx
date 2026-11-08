@@ -5,7 +5,15 @@ import StudentModal from "@/lib/components/student/studentModal";
 import { IStudent } from "@/lib/store/classes/classSlice.type";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { getAllStudents } from "@/lib/store/students/studentSlice";
+import { Pen } from "lucide-react";
+import Link from "next/link";
 import React, { useEffect } from "react";
+
+const ActionButton = ({ link }: { link: string }) => {
+  return <Link href={link} className="px-1 inline-flex cursor-pointer">
+    <Pen size={16} className="text-green-600" />
+  </Link>;
+};
 
 const page = () => {
   const dispatch = useAppDispatch();
@@ -18,22 +26,25 @@ const page = () => {
   const { students, loading, error } = useAppSelector(
     (state) => state.students,
   );
-
   const tableData = students?.map((student) => ({
     "Full Name": student.student_full_name,
     Email: student.student_email,
-    "Date of Birth": new Date(student.student_date_of_birth).toLocaleDateString(),
+    "Date of Birth": new Date(
+      student.student_date_of_birth,
+    ).toLocaleDateString(),
     Address: student.student_address,
     Class: student.class_name,
+    Action: <ActionButton link={`/students/${student.student_id}`} />,
   }));
 
   const tableButton = (
     <div>
-      {
-        isModalOpen && (
-          <StudentModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
-        )
-      }
+      {isModalOpen && (
+        <StudentModal
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+        />
+      )}
       <button
         onClick={() => setIsModalOpen(true)}
         className="px-4 py-2.5 bg-green-800 text-white hover:bg-green-900 cursor-pointer"

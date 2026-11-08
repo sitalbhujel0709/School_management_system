@@ -17,7 +17,7 @@ const Table = ({
   tableButton
 }: TableProps) => {
 
-
+  
   return (
     <div className="p-2 overflow-y-auto">
       {/* head content of table */}
@@ -53,11 +53,7 @@ const Table = ({
                     </td>
                   ))
                 }
-                <td className="px-4 py-2">
-                  <button className="px-1 cursor-pointer">
-                    <Pen size={16} className="text-green-600" />
-                  </button>
-                </td>
+                
               </tr>
             ))}
           </tbody>

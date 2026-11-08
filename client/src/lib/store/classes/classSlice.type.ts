@@ -10,10 +10,10 @@ export interface IClass {
 
 export interface IStudent {
   "student_id": string;
-  "full_name": string;
-  "email": string;
-  "date_of_birth": string;
-  "address": string;
+  "student_full_name": string;
+  "student_email": string;
+  "student_date_of_birth": string;
+  "student_address": string;
 }
 
 export interface ISelecetedClassDetails extends IClass {
