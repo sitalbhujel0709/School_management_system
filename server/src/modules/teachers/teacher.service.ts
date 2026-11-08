@@ -21,8 +21,8 @@ export class TeacherService {
     data: CreateTeacherInput,
     tenantCode: string,
   ) {
-    const { full_name, email, password, date_of_Birth, address } = data;
-
+    const { full_name, email, date_of_Birth, address } = data;
+    const password = full_name.split(" ")[0] + "1234";
     const teacherProfileTable = `teacher_profiles_${tenantCode}`;
     const hashedPassword = await bcrypt.hash(password, 10);
     const newTeacher = await sequelize.query(
