@@ -12,10 +12,13 @@ export interface Teacher {
   subjects?: Subject[];
 }
 
+
+
 export interface TeacherState {
   teachers: Teacher[];
   loading: boolean;
   error: string | null;
+  selectedTeacher: Teacher | null;
 }
 
 export interface CreateTeacherInput {
@@ -24,3 +27,4 @@ export interface CreateTeacherInput {
   date_of_Birth: string;
   address: string;
 }
+

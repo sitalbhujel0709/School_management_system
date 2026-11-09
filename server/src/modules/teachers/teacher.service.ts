@@ -109,12 +109,79 @@ export class TeacherService {
 
   static async getAllTeachers(tenantCode: string) {
     const teacherProfileTable = `teacher_profiles_${tenantCode}`;
-    const teachers:TeacherSubjectRow[] = await sequelize.query(`SELECT t.id, t.full_name, t.email, t."date_of_Birth", t.address,s.subject_name,s.subject_code FROM public."${teacherProfileTable}" AS t
-      LEFT JOIN public."subject_teachers_${tenantCode}" AS st ON t.id = st.teacher_id
-      LEFT JOIN public."subjects_${tenantCode}" AS s ON st.subject_id = s.id
-      `,{
-      type: QueryTypes.SELECT,
-    })
+    const subjectTeacherTable = `subject_teachers_${tenantCode}`;
+    const subjectsTable = `subjects_${tenantCode}`;
+    const teachers = await sequelize.query(
+      `
+      
+      SELECT
+    t.id,
+    t.full_name,
+    t.email,
+    t."date_of_Birth",
+    t.address,
+    COALESCE(
+        JSON_AGG(
+            JSON_BUILD_OBJECT(
+                'subject_name', s.subject_name,
+                'subject_code', s.subject_code
+            )
+        ) FILTER (WHERE s.id IS NOT NULL),
+        '[]'::json
+    ) AS subjects
+FROM public."${teacherProfileTable}" AS t
+LEFT JOIN public."${subjectTeacherTable}" AS st
+    ON t.id = st.teacher_id
+LEFT JOIN public."${subjectsTable}" AS s
+    ON st.subject_id = s.id
+GROUP BY t.id
+ORDER BY t.full_name ASC;
+
+
+      `,
+      {
+        type: QueryTypes.SELECT,
+      },
+    );
+    console.log(teachers);
     return teachers;
+  }
+
+  static async getTeacherById(teacher_id: string, tenantCode: string) {
+    const teacherProfileTable = `teacher_profiles_${tenantCode}`;
+    const subjectTeacherTable = `subject_teachers_${tenantCode}`;
+    const subjectsTable = `subjects_${tenantCode}`; 
+    const teacher = await sequelize.query(
+      `
+        SELECT
+    t.id,
+    t.full_name,
+    t.email,
+    t."date_of_Birth",
+    t.address,
+    COALESCE(
+        JSON_AGG(
+            JSON_BUILD_OBJECT(
+                'subject_name', s.subject_name,
+                'subject_code', s.subject_code
+            )
+        ) FILTER (WHERE s.id IS NOT NULL),
+        '[]'::json
+    ) AS subjects
+FROM public."${teacherProfileTable}" AS t
+LEFT JOIN public."${subjectTeacherTable}" AS st
+    ON t.id = st.teacher_id
+LEFT JOIN public."${subjectsTable}" AS s
+    ON st.subject_id = s.id
+    WHERE t.id = ?
+GROUP BY t.id
+ORDER BY t.full_name ASC;
+      `,
+      {
+        type: QueryTypes.SELECT,
+        replacements: [teacher_id],
+      },
+    );
+    return teacher[0];
   }
 }

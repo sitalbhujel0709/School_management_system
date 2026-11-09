@@ -27,4 +27,15 @@ export class SubjectController {
       data: subjects,
     });
   }
+  static async getAllSubjects(req: Request, res: Response) {
+    const tenantCode = req.user?.tenant?.tenantCode;
+    if (!tenantCode) {
+      return res.status(400).json({ message: "Tenant code is missing" });
+    }
+    const subjects = await SubjectService.getAllSubjects(tenantCode);
+    return res.status(200).json({
+      message: "Subjects retrieved successfully",
+      data: subjects,
+    });
+  }
 }

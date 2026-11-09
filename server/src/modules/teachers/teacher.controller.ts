@@ -10,15 +10,7 @@ interface Teacher {
   subject_name: string;
   subject_code: string;
 }
-interface TeacherWithSubjects extends Omit<
-  Teacher,
-  "subject_name" | "subject_code"
-> {
-  subjects: {
-    subject_name: string;
-    subject_code: string;
-  }[];
-}
+
 
 export class TeacherController {
   static async createTeacherProfile(req: Request, res: Response) {
@@ -60,38 +52,28 @@ export class TeacherController {
     if (!tenantCode) {
       return res.status(400).json({ message: "Tenant code is missing" });
     }
-    const teachers: Teacher[] = await TeacherService.getAllTeachers(tenantCode);
+    const teachers = await TeacherService.getAllTeachers(tenantCode);
 
-    const teacherMap = teachers.reduce<Map<string, TeacherWithSubjects>>(
-      (map, item) => {
-        let teacher = map.get(item.id);
-
-        if (!teacher) {
-          teacher = {
-            id: item.id,
-            full_name: item.full_name,
-            email: item.email,
-            date_of_Birth: item.date_of_Birth,
-            address: item.address,
-            subjects: [],
-          };
-
-          map.set(item.id, teacher);
-        }
-
-        teacher.subjects.push({
-          subject_name: item.subject_name,
-          subject_code: item.subject_code,
-        });
-
-        return map;
-      },
-      new Map<string, TeacherWithSubjects>(),
-    );
-    const responseData = Array.from(teacherMap.values());
+   
     return res.status(200).json({
       message: "Teachers retrieved successfully",
-      data: Array.from(responseData),
+      data: Array.from(teachers),
+    });
+  }
+
+  static async getTeacherById(req: Request, res: Response) {
+    const tenantCode = req.user?.tenant?.tenantCode;
+    const { teacherId } = req.params;
+    if (!tenantCode) {
+      return res.status(400).json({ message: "Tenant code is missing" });
+    }
+    const teacher = await TeacherService.getTeacherById(
+      teacherId as string,
+      tenantCode,
+    );
+    return res.status(200).json({
+      message: "Teacher retrieved successfully",
+      data: teacher,
     });
   }
 }

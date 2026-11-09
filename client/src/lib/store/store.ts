@@ -4,6 +4,7 @@ import tenantReducer from "./tenant/tenantSlice"
 import classReducer from "./classes/classSlice"
 import studentReducer from "./students/studentSlice"
 import teacherReducer from "./teachers/teacherSlice"
+import subjectReducer from "./subjects/subjectSlice"
 
 const store = configureStore({
   reducer:{
@@ -11,7 +12,8 @@ const store = configureStore({
     tenant: tenantReducer,
     classes: classReducer,
     students: studentReducer,
-    teachers: teacherReducer
+    teachers: teacherReducer,
+    subjects: subjectReducer
   }
 })
 

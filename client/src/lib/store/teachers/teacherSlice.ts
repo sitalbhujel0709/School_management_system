@@ -7,6 +7,7 @@ const initialState:TeacherState = {
   teachers: [],
   loading: false,
   error: null,
+  selectedTeacher: null,
 }
 
 const teacherSlice = createSlice({
@@ -21,12 +22,17 @@ const teacherSlice = createSlice({
     },
     setTeachers: (state: TeacherState, action:PayloadAction<Teacher[]>) => {
       state.teachers = action.payload;
+    },
+
+    setSelectedTeacher: (state: TeacherState, action:PayloadAction<Teacher | null>) => {
+      state.selectedTeacher = action.payload;
     }
+
   }
 
 })
 
-export const { setLoading, setError, setTeachers } = teacherSlice.actions;
+export const { setLoading, setError, setTeachers, setSelectedTeacher } = teacherSlice.actions;
 export default teacherSlice.reducer;
 
 export function getAllTeachers() {
@@ -56,6 +62,24 @@ export const createTeacher = (teacherData:CreateTeacherInput) => {
       return {success:true}
     } catch (error:any) {
       dispatch(setError( error.message || "Failed to create teacher" ));
+      return {success:false}
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+}
+
+export const getTeacherById = (teacherId:string) => {
+  return async function(dispatch:AppDispatch){
+    try {
+      dispatch(setLoading(true));
+      const response = await API_INSTANCE.get(`/teachers/${teacherId}`);
+      console.log("response.data.data",response.data.data);
+      dispatch(setError(null));
+      dispatch(setSelectedTeacher(response.data.data)); 
+      return {success:true, data: response.data.data};
+    } catch (error:any) {
+      dispatch(setError( error.message || "Failed to fetch teacher" ));
       return {success:false}
     } finally {
       dispatch(setLoading(false));

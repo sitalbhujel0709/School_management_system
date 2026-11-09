@@ -11,6 +11,7 @@ const teacherRouter = Router();
 teacherRouter.post('/',requireAuth,requirePlan(["PRO","MAX"]),validationHandler(createTeacherProfileSchema),asyncErrorHandler(TeacherController.createTeacherProfile));
 teacherRouter.post('/:teacherId/assign-subjects',requireAuth,requirePlan(["PRO","MAX"]),validationHandler(assignSubjectsToTeacherSchema),asyncErrorHandler(TeacherController.assignSubjectsToTeacher));
 teacherRouter.get('/',requireAuth,requirePlan(["PRO","MAX"]),asyncErrorHandler(TeacherController.getAllTeachers));
+teacherRouter.get('/:teacherId',requireAuth,requirePlan(["PRO","MAX"]),asyncErrorHandler(TeacherController.getTeacherById));
 
 
 export default teacherRouter;

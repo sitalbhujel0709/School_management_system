@@ -34,4 +34,20 @@ export class SubjectService {
     );
     return subjects;
   }
+
+  static async getAllSubjects(tenantCode: string) {
+    const subjectsTable = `subjects_${tenantCode}`;
+    const classesTable = `classes_${tenantCode}`;
+    const subjects = await sequelize.query(
+      `
+       SELECT s.id, s.subject_name, s.subject_code, s.credit_hours, c.class_name
+       FROM public."${subjectsTable}" s
+       JOIN public."${classesTable}" c ON s.class_id = c.id;
+      `
+      ,{
+      type: QueryTypes.SELECT,
+
+    })
+    return subjects;
+  }
 }

@@ -10,5 +10,6 @@ const subjectRouter = Router();
 
 subjectRouter.post('/',requireAuth,requirePlan(["PRO","MAX"]),validationHandler(createSubjectSchema),asyncErrorHandler(SubjectController.createSubject));
 subjectRouter.get('/:classId',requireAuth,requirePlan(["PRO","MAX"]),asyncErrorHandler(SubjectController.getSubjectsByClass));
+subjectRouter.get('/',requireAuth,requirePlan(["PRO","MAX"]),asyncErrorHandler(SubjectController.getAllSubjects));
 
 export default subjectRouter;
