@@ -1,15 +1,19 @@
 "use client";
+import AssignSubjectModal from "@/lib/components/teacher/AssignSubjectModal";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { getTeacherById } from "@/lib/store/teachers/teacherSlice";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const page = () => {
   const dispatch = useAppDispatch();
   const { id } = useParams();
   const teacherId = id as string;
+
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
 
   useEffect(() => {
     dispatch(getTeacherById(teacherId));
@@ -18,6 +22,33 @@ const page = () => {
   const selectedTeacher = useAppSelector(
     (state) => state.teachers.selectedTeacher,
   );
+
+  useEffect(() => {
+    if (selectedTeacher?.subjects) {
+      setSelectedSubjects(
+        selectedTeacher.subjects.map((subject) => subject.subject_code),
+      );
+    }
+  }, [selectedTeacher]);
+
+  const handleSubjectToggle = (subjectCode: string) => {
+    setSelectedSubjects((prev) =>
+      prev.includes(subjectCode)
+        ? prev.filter((code) => code !== subjectCode)
+        : [...prev, subjectCode],
+    );
+  };
+
+  const handleSaveSubjects = async () => {
+    try {
+      console.log(selectedSubjects);
+    } catch (error) {
+    } finally {
+      setIsAssignModalOpen(false);
+    }
+  };
+
+  const handleRemoveSubject = (subjectCode: string) => {};
 
   return (
     <div className="py-8 px-6">
@@ -84,35 +115,63 @@ const page = () => {
                 <h3 className="font-bold text-lg text-green-800">
                   Assigned Subjects
                 </h3>
-                <button className="bg-green-800 text-white px-3 py-1.5 cursor-pointer hover:bg-green-900">Assign Subject</button>
+                <>
+                  <button
+                    onClick={() => setIsAssignModalOpen(true)}
+                    className="bg-green-800 text-white px-3 py-1.5 cursor-pointer hover:bg-green-900"
+                  >
+                    Assign Subject
+                  </button>
+                  {isAssignModalOpen && (
+                    <AssignSubjectModal
+                      isModalOpen={isAssignModalOpen}
+                      setIsModalOpen={setIsAssignModalOpen}
+                      selectedSubjects={selectedSubjects}
+                      handleSubjectToggle={handleSubjectToggle}
+                      handleSaveSubjects={handleSaveSubjects}
+                    />
+                  )}
+                </>
               </div>
               <div className="mt-2 space-y-1">
                 {selectedTeacher?.subjects &&
                 selectedTeacher.subjects.length > 0 ? (
-                  <ul className="">
-                    {selectedTeacher?.subjects?.map((subject) => (
-                      <li
+                  <div className="flex flex-wrap gap-2">
+                    {selectedTeacher.subjects.map((subject) => (
+                      <div
                         key={subject.subject_code}
-                        className="flex items-center justify-between px-2 py-1 hover:bg-green-50"
+                        className="inline-flex items-center gap-3 bg-green-50 border border-green-200 px-3 py-2"
                       >
-                        <div className="">
-                          <p className="text-green-800 font-semibold">
+                        <div>
+                          <p className="text-green-800 text-sm font-semibold">
                             {subject.subject_name}
                           </p>
-                          <p className="text-gray-500 text-sm">
+                          <p className="text-green-600 text-xs">
                             {subject.subject_code}
                           </p>
                         </div>
-                        <button className="p-1 hover:bg-gray-100 cursor-pointer">
-                          <X size={16} />
+
+                        <button
+                          onClick={() =>
+                            handleRemoveSubject(subject.subject_code)
+                          }
+                          className="text-green-700 hover:text-red-600 hover:bg-red-50 rounded-full p-1"
+                          title="Remove subject"
+                        >
+                          <X size={15} />
                         </button>
-                      </li>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 ) : (
-                  <p className="text-green-800 font-semibold">
-                    No subjects assigned to this teacher.
-                  </p>
+                  <div className="border border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <p className="text-gray-500 text-sm">
+                      No subjects assigned to this teacher.
+                    </p>
+                    <p className="text-green-700 text-sm mt-1">
+                      Click Assign Subject to get started.
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
