@@ -86,3 +86,37 @@ export const getTeacherById = (teacherId:string) => {
     }
   }
 }
+
+export const assignSubjectsToTeacher = (teacherId:string, subjectIds:string[]) => {
+  return async function(dispatch:AppDispatch){
+    try {
+      dispatch(setLoading(true));
+      const response = await API_INSTANCE.post(`/teachers/${teacherId}/assign-subjects`, { subject_ids: subjectIds });
+      dispatch(getTeacherById(teacherId));
+      dispatch(setError(null));
+      return {success:true, data: response.data.data};
+    } catch (error:any) {
+      dispatch(setError( error.message || "Failed to assign subjects" ));
+      return {success:false}
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+}
+
+export const removeSubjectFromTeacher = (teacherId:string, subjectId:string) => {
+  return async function(dispatch:AppDispatch){
+    try {
+      dispatch(setLoading(true));
+      const response = await API_INSTANCE.delete(`/teachers/${teacherId}/subjects/${subjectId}`);
+      dispatch(getTeacherById(teacherId));
+      dispatch(setError(null));
+      return {success:true, data: response.data.data};
+    } catch (error:any) {
+      dispatch(setError( error.message || "Failed to remove subject from teacher" ));
+      return {success:false}
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+}

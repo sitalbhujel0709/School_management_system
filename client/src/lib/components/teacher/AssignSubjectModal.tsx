@@ -5,7 +5,6 @@ import { Search, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 interface AssignSubjectModalProps {
-  isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
   selectedSubjects: string[];
   handleSubjectToggle: (subjectCode:string)=>void;
@@ -14,7 +13,6 @@ interface AssignSubjectModalProps {
 }
 
 const AssignSubjectModal = ({
-  isModalOpen,
   setIsModalOpen,
   selectedSubjects,
   handleSubjectToggle,
@@ -65,7 +63,7 @@ const AssignSubjectModal = ({
             )
             .map((subject) => (
               <label
-                key={subject.subject_code}
+                key={subject.id}
                 className="flex items-center justify-between p-3  hover:bg-green-50 cursor-pointer border border-gray-300"
               >
                 <div>
@@ -79,8 +77,8 @@ const AssignSubjectModal = ({
 
                 <input
                   type="checkbox"
-                  checked={selectedSubjects.includes(subject.subject_code)}
-                  onChange={() => handleSubjectToggle(subject.subject_code)}
+                  checked={selectedSubjects.includes(subject.id)}
+                  onChange={() => handleSubjectToggle(subject.id)}
                   className="accent-green-800 w-4 h-4"
                 />
               </label>

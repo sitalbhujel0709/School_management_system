@@ -123,6 +123,7 @@ export class TeacherService {
     COALESCE(
         JSON_AGG(
             JSON_BUILD_OBJECT(
+                'subject_id', s.id,
                 'subject_name', s.subject_name,
                 'subject_code', s.subject_code
             )
@@ -150,7 +151,7 @@ ORDER BY t.full_name ASC;
   static async getTeacherById(teacher_id: string, tenantCode: string) {
     const teacherProfileTable = `teacher_profiles_${tenantCode}`;
     const subjectTeacherTable = `subject_teachers_${tenantCode}`;
-    const subjectsTable = `subjects_${tenantCode}`; 
+    const subjectsTable = `subjects_${tenantCode}`;
     const teacher = await sequelize.query(
       `
         SELECT
@@ -162,6 +163,7 @@ ORDER BY t.full_name ASC;
     COALESCE(
         JSON_AGG(
             JSON_BUILD_OBJECT(
+                'subject_id', s.id,
                 'subject_name', s.subject_name,
                 'subject_code', s.subject_code
             )
@@ -183,5 +185,25 @@ ORDER BY t.full_name ASC;
       },
     );
     return teacher[0];
+  }
+
+  static async deleteSubjectFromTeacher(
+    teacherId: string,
+    subjectId: string,
+    tenantCode: string,
+  ) {
+    const subjectTeacherTable = `subject_teachers_${tenantCode}`;
+    const deletedCount = await sequelize.query(
+      `
+      DELETE FROM public."${subjectTeacherTable}"
+      WHERE teacher_id = ? AND subject_id = ?
+      RETURNING *;
+    `,
+      {
+        type: QueryTypes.DELETE,
+        replacements: [teacherId, subjectId],
+      },
+    );
+    return {success: true}
   }
 }

@@ -1,14 +1,16 @@
 "use client";
 import AssignSubjectModal from "@/lib/components/teacher/AssignSubjectModal";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
-import { getTeacherById } from "@/lib/store/teachers/teacherSlice";
+import { assignSubjectsToTeacher, getTeacherById, removeSubjectFromTeacher } from "@/lib/store/teachers/teacherSlice";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 
 const page = () => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { id } = useParams();
   const teacherId = id as string;
 
@@ -26,29 +28,46 @@ const page = () => {
   useEffect(() => {
     if (selectedTeacher?.subjects) {
       setSelectedSubjects(
-        selectedTeacher.subjects.map((subject) => subject.subject_code),
+        selectedTeacher.subjects.map((subject) => subject.subject_id),
       );
     }
   }, [selectedTeacher]);
 
-  const handleSubjectToggle = (subjectCode: string) => {
+  const handleSubjectToggle = (subjectId: string) => {
     setSelectedSubjects((prev) =>
-      prev.includes(subjectCode)
-        ? prev.filter((code) => code !== subjectCode)
-        : [...prev, subjectCode],
+      prev.includes(subjectId)
+        ? prev.filter((id) => id !== subjectId)
+        : [...prev, subjectId],
     );
   };
 
   const handleSaveSubjects = async () => {
     try {
       console.log(selectedSubjects);
-    } catch (error) {
+      const response = await dispatch(assignSubjectsToTeacher( teacherId, selectedSubjects ));
+      if(response.success){
+        toast.success("Subjects assigned successfully");
+        router.refresh();
+      }
+    } catch (error:any) {
+      toast.error(error.message || "Failed to assign subjects");
+
     } finally {
       setIsAssignModalOpen(false);
     }
   };
 
-  const handleRemoveSubject = (subjectCode: string) => {};
+  const handleRemoveSubject = async (subjectId: string) => {
+    try {
+      const response = await dispatch(removeSubjectFromTeacher(teacherId, subjectId));
+      if(response.success){
+        toast.success("Subject removed successfully");
+        router.refresh();
+      }
+    } catch (error:any) {
+      toast.error(error.message || "Failed to remove subject");
+    }
+  };
 
   return (
     <div className="py-8 px-6">
@@ -124,7 +143,6 @@ const page = () => {
                   </button>
                   {isAssignModalOpen && (
                     <AssignSubjectModal
-                      isModalOpen={isAssignModalOpen}
                       setIsModalOpen={setIsAssignModalOpen}
                       selectedSubjects={selectedSubjects}
                       handleSubjectToggle={handleSubjectToggle}
@@ -153,7 +171,7 @@ const page = () => {
 
                         <button
                           onClick={() =>
-                            handleRemoveSubject(subject.subject_code)
+                            handleRemoveSubject(subject.subject_id)
                           }
                           className="text-green-700 hover:text-red-600 hover:bg-red-50 rounded-full p-1"
                           title="Remove subject"

@@ -76,4 +76,21 @@ export class TeacherController {
       data: teacher,
     });
   }
+
+  static async removeSubjectFromTeacher(req: Request, res: Response) {
+    const tenantCode = req.user?.tenant?.tenantCode;
+    const { teacherId, subjectId } = req.params;
+    if (!tenantCode) {
+      return res.status(400).json({ message: "Tenant code is missing" });
+    }
+    const response = await TeacherService.deleteSubjectFromTeacher(
+      teacherId as string,
+      subjectId as string,
+      tenantCode,
+    );
+    return res.status(200).json({
+      message: "Subject removed from teacher successfully",
+      data: response,
+    });
+  }
 }

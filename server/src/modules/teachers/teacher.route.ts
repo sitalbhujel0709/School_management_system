@@ -12,6 +12,7 @@ teacherRouter.post('/',requireAuth,requirePlan(["PRO","MAX"]),validationHandler(
 teacherRouter.post('/:teacherId/assign-subjects',requireAuth,requirePlan(["PRO","MAX"]),validationHandler(assignSubjectsToTeacherSchema),asyncErrorHandler(TeacherController.assignSubjectsToTeacher));
 teacherRouter.get('/',requireAuth,requirePlan(["PRO","MAX"]),asyncErrorHandler(TeacherController.getAllTeachers));
 teacherRouter.get('/:teacherId',requireAuth,requirePlan(["PRO","MAX"]),asyncErrorHandler(TeacherController.getTeacherById));
+teacherRouter.delete('/:teacherId/subjects/:subjectId',requireAuth,requirePlan(["PRO","MAX"]),asyncErrorHandler(TeacherController.removeSubjectFromTeacher));
 
 
 export default teacherRouter;
