@@ -86,6 +86,8 @@ export class TenantService {
         const studentsTable = `students_${tenantCode}`;
         const subjectsTable = `subjects_${tenantCode}`;
         const subject_teacherTable = `subject_teachers_${tenantCode}`;
+        const attendanceSessionTable = `attendance_sessions_${tenantCode}`;
+        const attendance = `student_attendance_${tenantCode}`;
 
         await queryInterface.createTable(
           studentProfileTable,
@@ -257,6 +259,66 @@ export class TenantService {
           name: `unique_subject_teacher_${tenantCode}`,
           transaction,
         });
+        await queryInterface.createTable(attendanceSessionTable,{
+          ...commonColums(),
+          session_date: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: sequelize.literal("CURRENT_DATE"),
+          },
+          class_id: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+              model: classTable,
+              key: "id",
+            },
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE",
+          },
+
+        }, { transaction });
+        await queryInterface.addConstraint(attendanceSessionTable, {
+          fields: ["session_date", "class_id"],
+          type: "unique",
+          name: `unique_session_date_class_${tenantCode}`,
+          transaction,
+        })
+        await queryInterface.createTable(attendance,{
+          ...commonColums(),
+          student_id: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+              model: studentProfileTable,
+              key: "id",
+            },
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE",
+          },
+          attendance_session_id: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+              model: attendanceSessionTable,
+              key: "id",
+            },
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE",
+          },
+          status: {
+            type: DataTypes.ENUM("present", "absent", "late", "excused"),
+            allowNull: false,
+            defaultValue: "absent",
+          }
+        },{transaction})
+        await queryInterface.addConstraint(attendance, {
+          fields: ["student_id", "attendance_session_id"],
+          type: "unique",
+          name: `unique_student_attendance_session_${tenantCode}`,
+          transaction,
+          
+        })
         return newTenant;
       },
     );
