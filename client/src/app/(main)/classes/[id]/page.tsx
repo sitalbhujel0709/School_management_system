@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 import React, { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { getAttendanceSession } from "@/lib/store/attendance/attendanceSlice";
 
 const page = () => {
   const params = useParams()
@@ -16,7 +17,11 @@ const page = () => {
 
   useEffect(()=>{
     dispatch(getClassById(classId))
-  },[])
+    dispatch(getAttendanceSession(classId))
+  },[classId, dispatch])
+
+  const attendanceSession = useAppSelector((state) => state.attendance.attendanceSession);
+  console.log("Attendance Session from Redux Store:", attendanceSession);
 
   const classDetails = useAppSelector((state) => state.classes.selectedClassDetails);
   const tableHeadings = ["Full Name", "Email", "Address", "Action"];

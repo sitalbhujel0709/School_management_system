@@ -9,5 +9,6 @@ import { asyncErrorHandler } from "../../middleware/asyncErrorHandler";
 const attendanceRouter = Router();
 
 attendanceRouter.post("/:classId",requireAuth,requirePlan(["MAX","PRO"]),validationHandler(createClassAttendanceSchema),asyncErrorHandler(AttendanceController.createClassAttendance));
-
+attendanceRouter.get("/:classId",requireAuth,requirePlan(["MAX","PRO"]),asyncErrorHandler(AttendanceController.getClassTodaysAttendance));
+attendanceRouter.get("/:classId/session",requireAuth,requirePlan(["MAX","PRO"]),asyncErrorHandler(AttendanceController.getClassTodaysAttendanceSession));
 export default attendanceRouter;

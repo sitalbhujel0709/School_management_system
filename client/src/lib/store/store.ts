@@ -5,6 +5,7 @@ import classReducer from "./classes/classSlice"
 import studentReducer from "./students/studentSlice"
 import teacherReducer from "./teachers/teacherSlice"
 import subjectReducer from "./subjects/subjectSlice"
+import attendanceReducer from "./attendance/attendanceSlice"
 
 const store = configureStore({
   reducer:{
@@ -13,7 +14,8 @@ const store = configureStore({
     classes: classReducer,
     students: studentReducer,
     teachers: teacherReducer,
-    subjects: subjectReducer
+    subjects: subjectReducer,
+    attendance: attendanceReducer
   }
 })
 

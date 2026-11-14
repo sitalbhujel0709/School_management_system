@@ -1,6 +1,12 @@
 import { DataTypes, QueryTypes } from "sequelize";
 import { sequelize } from "../../database/connection";
 
+interface AttendanceSession {
+  id: string;
+  class_id: string;
+  session_date:string;
+}
+
 export class AttendanceService {
   static async createClassAttendance(
     tenantCode: string,
@@ -52,5 +58,53 @@ export class AttendanceService {
       return { attendanceSession, attendanceRecords };
     });
     return attendance;
+  }
+
+  static async getClassTodaysAttendanceSession(tenantCode: string, classId: string) {
+    const attendanceSessionTable = `attendance_sessions_${tenantCode}`;
+    const attendanceSession  =  await sequelize.query(`
+      SELECT * FROM public."${attendanceSessionTable}" AS s
+      WHERE s.class_id = ? AND s.session_date = ?
+    `,{
+      type: QueryTypes.SELECT,
+      replacements: [classId, new Date().toISOString().split('T')[0]]
+    })
+
+    return attendanceSession;
+  }
+
+  static async getClassTodaysAttendance(tenantCode: string, classId: string) {
+    const attendanceSessionTable = `attendance_sessions_${tenantCode}`;
+    const attendanceTable = `student_attendance_${tenantCode}`;
+
+    const attendanceSessions: AttendanceSession[] = await sequelize.query(`
+      SELECT s.session_date AS session_date , JSON_AGG(JSON_BUILD_OBJECT('class_id', s.class_id, 'class_name', c.class_name)) AS class_info  FROM public."${attendanceSessionTable}" AS s
+      LEFT JOIN public."${attendanceTable}" AS a ON s.id = a.attendance_session_id
+      LEFT JOIN public."classes_${tenantCode}" AS c ON s.class_id = c.id
+      WHERE s.class_id = ? AND s.session_date = ?
+      GROUP BY s.session_date
+      `,{
+      type: QueryTypes.SELECT,
+      replacements: [classId, new Date().toISOString().split('T')[0]] 
+    })
+    const attendanceRecords = await sequelize.query(`
+      SELECT
+        c.class_name as class_name,
+        st.full_name as student_name,
+        a.status as status,
+        s.session_date as session_date
+
+      FROM public."${attendanceSessionTable}" AS s
+
+      LEFT JOIN public."${attendanceTable}" AS a ON s.id = a.attendance_session_id
+      LEFT JOIN public."student_profiles_${tenantCode}" AS st ON a.student_id = st.id
+      LEFT JOIN public."classes_${tenantCode}" AS c ON s.class_id = c.id
+      WHERE s.class_id = ? AND s.session_date = ?
+
+      `,{
+        type: QueryTypes.SELECT,
+        replacements: [classId, new Date().toISOString().split('T')[0]]
+      })
+    return { attendanceSessions, attendanceRecords };
   }
 }
