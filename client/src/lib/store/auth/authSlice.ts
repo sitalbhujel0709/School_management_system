@@ -42,18 +42,31 @@ export const loginUser = (loginCredentials: LoginCredentials) => {
     try {
       dispatch(setLoading(true));
       dispatch(setError(null));
-      await API_INSTANCE.post("/users/login", loginCredentials);
+      const loginResponse = await API_INSTANCE.post("/users/login", loginCredentials);
+      const token = loginResponse.data.data.accessToken;
+
+      await fetch("/api/auth/session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ accessToken: token }),
+      });
+
       const response = await API_INSTANCE.get("/users/me");
       const user:User= response.data.data.user;
       dispatch(setUser(user));
       dispatch(setIsAuthenticated(true));
       dispatch(setError(null));
       return { success: true};
-    } catch (error) {
-      if (error instanceof Error) {
-        dispatch(setError(error.message));
-        dispatch(setIsAuthenticated(false));
-      }
+    } catch (error:any) {
+      dispatch(setUser(null));
+      dispatch(setIsAuthenticated(false));
+      dispatch(setError(
+        error.response?.data?.message || "Login failed"
+      ));
+
+      return { success: false };
     } finally {
       dispatch(setLoading(false));
       dispatch(setUserInitialized(true));

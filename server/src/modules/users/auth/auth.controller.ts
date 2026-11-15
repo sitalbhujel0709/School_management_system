@@ -6,27 +6,44 @@ export class AuthController {
   static async registerUser(req: Request, res: Response) {
     const { username, email, password } = req.body;
     const user = await AuthService.registerUser(username, email, password);
-    if(!user) {
+    if (!user) {
       return res.status(400).json({ message: "User registration failed" });
     }
-    res.status(201).json({ message: "User registered successfully",data:{user}  });
+    res
+      .status(201)
+      .json({ message: "User registered successfully", data: { user } });
   }
   static async loginUser(req: Request, res: Response) {
     const { email, password } = req.body;
     const user = await AuthService.loginUser(email, password);
-    if(!user) {
+    if (!user) {
       return res.status(400).json({ message: "User login failed" });
     }
-    const token = createAccessToken({ id: user.id, email: user.email, username: user.username });
-    res.cookie("accessToken", token, { httpOnly: true,sameSite: 'none', secure: process.env.NODE_ENV === "production" });
-    res.status(200).json({ message: "User logged in successfully" });
+    const token = createAccessToken({
+      id: user.id,
+      email: user.email,
+      username: user.username,
+    });
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+    });
+    res.status(200).json({
+      success: true,
+      data: {
+        accessToken: token,
+      },
+    });
   }
   static async getCurrentUser(req: Request, res: Response) {
     const user = req.user;
-    if(!user) {
+    if (!user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    res.status(200).json({ message: "User fetched successfully", data: { user } });
+    res
+      .status(200)
+      .json({ message: "User fetched successfully", data: { user } });
   }
   static async logoutUser(req: Request, res: Response) {
     res.clearCookie("accessToken");
