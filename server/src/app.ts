@@ -13,7 +13,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 //server health check route
-app.get("/api/v1/health",requireAuth, (req, res) => {
+app.get("/api/v1/health", (req, res) => {
   res.status(200).json({ message: "Server is healthy" });
 });
 
