@@ -18,7 +18,7 @@ export class AuthController {
       return res.status(400).json({ message: "User login failed" });
     }
     const token = createAccessToken({ id: user.id, email: user.email, username: user.username });
-    res.cookie("accessToken", token, { httpOnly: true,sameSite: 'lax', secure: process.env.NODE_ENV === "production" });
+    res.cookie("accessToken", token, { httpOnly: true,sameSite: 'none', secure: process.env.NODE_ENV === "production" });
     res.status(200).json({ message: "User logged in successfully" });
   }
   static async getCurrentUser(req: Request, res: Response) {
