@@ -90,7 +90,9 @@ export class AttendanceService {
     const attendanceRecords = await sequelize.query(`
       SELECT
         c.class_name as class_name,
+        st.id as student_id,
         st.full_name as student_name,
+        st.email as student_email,
         a.status as status,
         s.session_date as session_date
 

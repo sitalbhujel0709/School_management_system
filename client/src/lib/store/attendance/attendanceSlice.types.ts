@@ -2,6 +2,7 @@
 export interface AttendanceState{
   attendanceSession: AttendanceSession | null;
   attendanceRecords: StudentAttendance[];
+  isAttendanceTaken: boolean;
   loading: boolean;
   error: string | null;
 }
@@ -13,8 +14,17 @@ export interface AttendanceSession {
 }
 
 export interface StudentAttendance {
-  id: string;
-  attendance_session_id: string;
   student_id: string;
+  student_name: string;
+  student_email: string;
+  class_name: string;
   status: string;
 }
+
+export interface CreateAttendanceInput {
+  date: string;
+  students: {
+    studentId: string;
+    status: string;
+  }[];
+} 
