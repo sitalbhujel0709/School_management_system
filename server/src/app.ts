@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3000","https://school-management-system-topaz-two.vercel.app"],
   credentials: true,
 }));
 app.use(cookieParser());
