@@ -24,7 +24,8 @@ class Subscription extends Model {
   @ForeignKey(()=>User)
   @Column({
     type: DataType.UUID,
-    allowNull: false
+    allowNull: false,
+    unique: true
   })
   declare userId: string;
   
